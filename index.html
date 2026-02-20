@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Movie Ticket Booking</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+}
+
+.movies {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px;
+    flex-wrap: wrap;
+}
+
+.movie-card {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+    width: 250px;
+}
+
+.movie-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+select, button {
+    margin-top: 10px;
+    padding: 8px;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    background: red;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkred;
+}
+
+.seat-container {
+    margin-top: 30px;
+    display: none;
+}
+
+.seats {
+    display: grid;
+    grid-template-columns: repeat(8, 40px);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.seat {
+    width: 40px;
+    height: 40px;
+    background: #444;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.seat.selected {
+    background: green;
+}
+
+.seat.occupied {
+    background: red;
+    cursor: not-allowed;
+}
+
+#total {
+    margin-top: 20px;
+    font-size: 18px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🎬 Movie Ticket Booking</h1>
+
+<div class="movies">
+
+    <div class="movie-card">
+        <img src="html/dv.jpg" alt="Adhitya Varma">
+        <h2>Adhitya Varma</h2>
+        <select onchange="selectMovie('Adhitya Varma')">
+            <option value="">Select Show Time</option>
+            <option value="10AM">10:00 AM</option>
+            <option value="2PM">2:00 PM</option>
+            <option value="6PM">6:00 PM</option>
+        </select>
+    </div>
+
+    <div class="movie-card">
+        <img src="html/dr.jpeg" alt="Dear Comrade">
+        <h2>Dear Comrade</h2>
+        <select onchange="selectMovie('Dear Comrade')">
+            <option value="">Select Show Time</option>
+            <option value="11AM">11:00 AM</option>
+            <option value="3PM">3:00 PM</option>
+            <option value="7PM">7:00 PM</option>
+        </select>
+    </div>
+
+</div>
+
+<div class="seat-container" id="seatContainer">
+    <h2 id="movieTitle"></h2>
+    <p>🎟 Select Your Seats</p>
+
+    <div class="seats" id="seats"></div>
+
+    <div id="total"></div>
+
+    <button onclick="confirmBooking()">Confirm Booking</button>
+</div>
+
+<script>
+let ticketPrice = 150;
+let selectedSeats = [];
+let currentMovie = "";
+
+function selectMovie(movieName) {
+    currentMovie = movieName;
+    document.getElementById("movieTitle").innerText = "Booking for " + movieName;
+    document.getElementById("seatContainer").style.display = "block";
+    createSeats();
+}
+
+function createSeats() {
+    const seatDiv = document.getElementById("seats");
+    seatDiv.innerHTML = "";
+    selectedSeats = [];
+
+    for (let i = 1; i <= 32; i++) {
+        let seat = document.createElement("div");
+        seat.classList.add("seat");
+
+        if (Math.random() < 0.2) {
+            seat.classList.add("occupied");
+        }
+
+        seat.addEventListener("click", function () {
+            if (!seat.classList.contains("occupied")) {
+                seat.classList.toggle("selected");
+
+                if (seat.classList.contains("selected")) {
+                    selectedSeats.push(i);
+                } else {
+                    selectedSeats = selectedSeats.filter(s => s !== i);
+                }
+
+                updateTotal();
+            }
+        });
+
+        seatDiv.appendChild(seat);
+    }
+}
+
+function updateTotal() {
+    let total = selectedSeats.length * ticketPrice;
+    document.getElementById("total").innerHTML =
+        "Selected Seats: " + selectedSeats.length +
+        "<br>Total Price: ₹" + total;
+}
+
+function confirmBooking() {
+    if (selectedSeats.length === 0) {
+        alert("Please select at least one seat!");
+        return;
+    }
+
+    alert("✅ Booking Confirmed for " + currentMovie +
+        "\nSeats: " + selectedSeats.join(", ") +
+        "\nTotal: ₹" + (selectedSeats.length * ticketPrice));
+}
+</script>
+
+</body>
+</html>
